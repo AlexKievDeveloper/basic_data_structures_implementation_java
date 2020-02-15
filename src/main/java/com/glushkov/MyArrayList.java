@@ -1,10 +1,10 @@
 package com.glushkov;
 
-public class MyArrayList<T> implements List<T>, MyIterator {
+public class MyArrayList<T> implements List<T> {
 
     Object[] list;
     private int size;
-    int index = 0;
+    private int index = 0;
 
     public MyArrayList() {
         list = new Object[10];
@@ -29,20 +29,6 @@ public class MyArrayList<T> implements List<T>, MyIterator {
         }
     }
 
-    @Override
-    public boolean hasNext() {
-        return index < list.length;
-    }
-
-    @Override
-    public Object next() {
-        return list[index++];
-    }
-
-    @Override
-    public void remove(Object object) {
-
-    }
 
     @Override
     public void remove(int index) {
@@ -113,10 +99,39 @@ public class MyArrayList<T> implements List<T>, MyIterator {
 
     @Override
     public String toString() {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            s += list[i] + ", ";
+            s.append(list[i]).append(", ");
         }
         return "размер: " + size + ", значения: " + s;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            @Override
+            public boolean hasNext() {
+                return index < list.length;
+            }
+
+            @Override
+            public Object next() {
+                if (index < size) {
+                    return list[index++];
+                }
+                return -1;
+            }
+
+            @Override
+            public void remove() {
+                if ((index >= 0) && (index < size)) {
+                    Object[] temp = new Object[size - 1];
+                    System.arraycopy(list, 0, temp, 0, index);
+                    System.arraycopy(list, index + 1, temp, index, size - index - 1);
+                    list = temp;
+                    size--;
+                }
+            }
+        };
     }
 }
