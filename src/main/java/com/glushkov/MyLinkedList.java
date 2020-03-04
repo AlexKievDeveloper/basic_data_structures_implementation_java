@@ -1,112 +1,86 @@
 package com.glushkov;
 
+import java.util.Iterator;
+
 public class MyLinkedList<T> implements List<T> {
 
-    private Node first;
-    private Node last;
-    private int size = 0;
-    private int index = 0;
+    private Node<T> first;
+    private Node<T> last;
+    private int size;
 
     public MyLinkedList() {
     }
 
     @Override
-    public void add(Object value) {
-        if (size == 0) {
-            last = first = new Node(null, value, null);
-        }
-        Node node = new Node(null, value, null);
-        last.next = node;
-        node.prev = last;
-        last = node;
-        size++;
+    public void add(T value) {
+        checkValue(value);
+        add(value, size);
     }
 
     @Override
-    public void addValue(Object value, int index) {
-        if ((index >= 0) && (index <= size)) {
-            Node temp = first;
-            if (size == 0) {
-                add(value);
-            } else if (index < size / 2) {
-                for (int i = 0; i <= index; i++) {
-                    temp = temp.next;
-                }
-            } else {
-                temp = last;
-                for (int i = size; i > index + 1; i--) {
-                    temp = temp.prev;
-                }
-            }
-            Node node = new Node(null, value, null);
+    public void add(T value, int index) {
+        validateIndex(index);
+        Node<T> node = new Node<>(value);
+
+        if (size == 0) {
+            first = last = node;
+        } else if (index == 0) {
+            first.prev = node;
+            node.next = first;
+            first = node;
+        } else if (size == index) {
+            node.prev = last;
+            last.next = node;
+            last = node;
+        } else {
+            Node<T> temp = getNode(index);
             temp.prev.next = node;
             node.prev = temp.prev;
             node.next = temp;
             temp.prev = node;
-            size++;
         }
+        size++;
     }
 
     @Override
-    public void remove(int index) {
-        if ((index >= 0) && (index <= size)) {
-            Node temp = first;
-            if (index < size / 2) {
-                for (int i = 0; i <= index; i++) {
-                    temp = temp.next;
-                }
-            } else {
-                temp = last;
-                for (int i = size; i > index + 1; i--) {
-                    temp = temp.prev;
-                }
-            }
-            if (index != size - 1) {
-                temp.prev.next = temp.next;
-                temp.next.prev = temp.prev;
-            } else {
-                temp.prev.next = null;
-                temp.prev = temp;
-            }
-            size--;
-        }
-    }
+    public T remove(int index) {
+        validateIndex(index);
+        Node<T> result;
 
-    @Override
-    public Object get(int index) {
-        Node node = first;
-        if ((index < 0) || (index > size)) {
-            return -1;
-        } else if (index < size / 2) {
-            for (int i = 0; i <= index; i++) {
-                node = node.next;
-            }
+        Node<T> temp = getNode(index);
+        result = temp;
+        if (size == 1) {
+            first = last = null;
+        } else if (index == 0) {
+            first.next.prev = null;
+            first = first.next;
+        } else if (index == size - 1) {
+            last = temp.prev;
+            last.next = null;
         } else {
-            node = last;
-            for (int i = size; i > index + 1; i--) {
-                node = node.prev;
-            }
+            temp.prev.next = temp.next;
+            temp.next.prev = temp.prev;
         }
-        return node.current;
+        size--;
+
+        return result.value;
+    }
+
+    @Override
+    public T get(int index) {
+        validateIndex(index);
+        return getNode(index).value;
     }
 
 
     @Override
-    public void set(Object value, int index) {
-        Node node = first;
-        if (index < size / 2) {
-            for (int i = 0; i <= index; i++) {
-                node = node.next;
-            }
-        } else {
-            node = last;
-            for (int i = size; i > index + 1; i--) {
-                node = node.prev;
-            }
-        }
-        node.current = value;
+    public T set(T value, int index) {
+        checkValue(value);
+        validateIndex(index);
+        Node<T> node = getNode(index);
+        node.value = value;
+        return node.value;
     }
-
 
     @Override
     public void clear() {
@@ -115,44 +89,34 @@ public class MyLinkedList<T> implements List<T> {
     }
 
     @Override
-    public boolean contains(Object object) {
-        boolean isTrue = false;
-        Node temp = first;
-        for (int i = 0; i < size; i++) {
-            temp = temp.next;
-
-            if (temp.current.equals(object)) {
-                isTrue = true;
-                break;
-            }
-        }
-        return isTrue;
+    public boolean contains(T value) {
+        checkValue(value);
+        return indexOf(value) != -1;
     }
 
     @Override
-    public int indexOf(Object value) {
-        Node temp = first;
-        for (int i = 0; i <= size; i++) {
-            temp = temp.next;
-            if (temp.current.equals(value)) {
+    public int indexOf(T value) {
+        checkValue(value);
+        Node<T> temp = first;
+        for (int i = 0; i < size; i++) {
+            if (temp.value.equals(value)) {
                 return i;
             }
+            temp = temp.next;
         }
         return -1;
     }
 
     @Override
-    public int lastIndexOf(Object value) {
-        Node temp = last;
-        if (temp.current != value) {
-            for (int i = size - 2; i >= 0; i--) {
-                temp = temp.prev;
-                if (temp.current.equals(value)) {
-                    return i;
-                }
+    public int lastIndexOf(T value) {
+        checkValue(value);
+        Node<T> temp = last;
+        for (int i = size - 1; i >= 0; i--) {
+            if (temp.value.equals(value)) {
+                return i;
             }
-        } else return size - 1;
-
+            temp = temp.prev;
+        }
         return -1;
     }
 
@@ -163,16 +127,47 @@ public class MyLinkedList<T> implements List<T> {
 
     @Override
     public boolean isEmpty() {
-        return size < 1;
+        return size == 0;
+    }
+
+    private void validateIndex(int index) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Allowed indexes between 0 and " + size +
+                    " inclusive, but index was: " + index);
+        }
+    }
+
+    private void checkValue(T value) {
+        if (value == null) {
+            throw new NullPointerException("Null value is not allowed");
+        }
+    }
+
+    private Node<T> getNode(int index) {
+        Node<T> node = first;
+        if (index < size / 2) {
+            for (int i = 0; i < index; i++) {
+                node = node.next;
+            }
+        } else if (index >= size / 2) {
+            node = last;
+            for (int i = size - 1; i > index; i--) {
+                node = node.prev;
+            }
+        }
+        return node;
     }
 
     @Override
     public String toString() {
-        Node node = first;
+        Node<T> node = first;
         StringBuilder s = new StringBuilder();
-        for (int i = 0; i < size; i++) {
+        s.append(node.value);
+
+        for (int i = 0; i < size - 1; i++) {
             node = node.next;
-            s.append(node.current).append(", ");
+            if (s.length() > 0) s.append(", ");
+            s.append(node.value);
         }
         return "размер: " + size + ", значения: " + s;
     }
@@ -180,93 +175,35 @@ public class MyLinkedList<T> implements List<T> {
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
-            private Node temp;
+            Node<T> current = first;
+            private int index;
 
             @Override
             public boolean hasNext() {
-                temp = first;
-                if (index < size / 2) {
-                    for (int i = 0; i < index; i++) {
-                        temp = temp.next;
-                    }
-                } else {
-                    temp = last;
-                    for (int i = size; i > index; i--) {
-                        temp = temp.prev;
-                    }
-                }
-                return temp.next != null;
+                return current != null;
             }
 
             @Override
-            public Object next() {
-                temp = first;
-                if (index < size / 2) {
-                    for (int i = 0; i < index; i++) {
-                        temp = temp.next;
-                    }
-                } else {
-                    temp = last;
-                    for (int i = size; i > index; i--) {
-                        temp = temp.prev;
-                    }
-                }
-
-                if (temp.next != null) {
-                    temp = temp.next;
-                    index++;
-                    return temp.current;
-                }
-                return -1;
+            public T next() {
+                T value = current.value;
+                current = current.next;
+                return value;
             }
 
             @Override
             public void remove() {
-                temp = first;
-                if (index < size / 2) {
-                    for (int i = 0; i < index; i++) {
-                        temp = temp.next;
-                    }
-                } else {
-                    temp = last;
-                    for (int i = size; i > index + 1; i--) {
-                        temp = temp.prev;
-                    }
-                }
-                if ((index >= 0) && (index <= size)) {
-                    if (index < size / 2) {
-                        for (int i = 0; i <= index; i++) {
-                            temp = temp.next;
-                        }
-                    } else {
-                        temp = last;
-                        for (int i = size; i > index + 1; i--) {
-                            temp = temp.prev;
-                        }
-                    }
-                    if (index != size - 1) {
-                        temp.prev.next = temp.next;
-                        temp.next.prev = temp.prev;
-                    } else {
-                        temp.prev.next = null;
-                        temp.prev = temp;
-                    }
-                    size--;
-                }
+                MyLinkedList.this.remove(index);
             }
         };
     }
 
+    private static class Node<T> {
+        T value;
+        Node<T> prev;
+        Node<T> next;
 
-    private static class Node {
-        Object current;
-        Node prev;
-        Node next;
-
-        Node(Node prev, Object current, Node next) {
-            this.current = current;
-            this.prev = prev;
-            this.next = next;
+        Node(T value) {
+            this.value = value;
         }
     }
 }

@@ -4,13 +4,13 @@ public interface List<T> extends Iterable<T> {
 
     void add(T value);
 
-    void addValue(T value, int index);
+    void add(T value, int index);
 
-    void remove(int index);
+    T remove(int index);
 
-    Object get(int index);
+    T get(int index);
 
-    void set(T value, int index);
+    T set(T value, int index);
 
     void clear();
 

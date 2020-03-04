@@ -1,51 +1,51 @@
 package com.glushkov;
 
+import java.util.Iterator;
+
 public class MyArrayList<T> implements List<T> {
 
-    Object[] list;
+    T[] list;
     private int size;
-    private int index = 0;
 
     public MyArrayList() {
-        list = new Object[10];
+        list = (T[]) new Object[10];
     }
 
     @Override
-    public void add(Object value) {
-        addValue(value, size);
+    public void add(T value) {
+        add(value, size);
     }
 
     @Override
-    public void addValue(Object value, int index) {
-        if ((index >= 0) && (index <= size)) {
-            if (size >= list.length) {
-                Object[] temp = new Object[size * 3 / 2 + 1];
-                System.arraycopy(list, 0, temp, 0, list.length);
-                list = temp;
-            }
-            System.arraycopy(list, index, list, index + 1, size - index);
-            list[index] = value;
-            size++;
+    public void add(T value, int index) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Allowed indexes between 0 and " + size +
+                    " inclusive, but index was: " + index);
         }
+        ensureCapacityAndGrow();
+        checkValue(value);
+        System.arraycopy(list, index, list, index + 1, size - index);
+        list[index] = value;
+        size++;
     }
 
 
     @Override
-    public void remove(int index) {
-        if ((index >= 0) && (index < size)) {
-            Object[] temp = new Object[size - 1];
-            System.arraycopy(list, 0, temp, 0, index);
-            System.arraycopy(list, index + 1, temp, index, size - index - 1);
-            list = temp;
-            size--;
+    public T remove(int index) {
+        validateIndex(index);
+        T result = list[index];
+
+        if (index != size - 1) {
+            System.arraycopy(list, index + 1, list, index, size - index - 1);
         }
+        list[size - 1] = null;
+        size--;
+        return result;
     }
 
     @Override
-    public Object get(int index) {
-        if ((index < 0) || (index > size)) {
-            return -1;
-        }
+    public T get(int index) {
+        validateIndex(index);
         return list[index];
     }
 
@@ -60,26 +60,30 @@ public class MyArrayList<T> implements List<T> {
     }
 
     @Override
-    public void set(Object value, int index) {
-        if ((index >= 0) && (index < size)) {
-            list[index] = value;
-        }
+    public T set(T value, int index) {
+        validateIndex(index);
+        checkValue(value);
+        T result =  list[index];
+        list[index] = value;
+        return result;
     }
 
     @Override
     public void clear() {
-        list = new Object[10];
+        for (int i = 0; i < size; i++) {
+            list[i] = null;
+        }
         size = 0;
     }
 
     @Override
-    public boolean contains(Object object) {
-        return indexOf(object) >= 0;
+    public boolean contains(T value) {
+        return indexOf(value) != -1;
     }
 
     @Override
-    public int indexOf(Object value) {
-
+    public int indexOf(T value) {
+        checkValue(value);
         for (int i = 0; i < size; i++)
             if (list[i].equals(value)) {
                 return i;
@@ -88,20 +92,43 @@ public class MyArrayList<T> implements List<T> {
     }
 
     @Override
-    public int lastIndexOf(Object value) {
-
-        for (int i = size - 1; 0 <= i; i--)
+    public int lastIndexOf(T value) {
+        checkValue(value);
+        for (int i = size - 1; i >= 0; i--)
             if (list[i].equals(value)) {
                 return i;
             }
         return -1;
     }
 
+    private void ensureCapacityAndGrow() {
+        if (size == list.length) {
+            T[] temp = (T[]) new Object[size * 3 / 2 + 1];
+            System.arraycopy(list, 0, temp, 0, size);
+            list = temp;
+        }
+    }
+
+    private void validateIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Allowed indexes between 0 and " + size +
+                    " inclusive, but index was: " + index);
+        }
+    }
+
+    private void checkValue(T value) {
+        if (value == null) {
+            throw new NullPointerException("Null value is not allowed");
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
+        /*for (T x: list)*/
         for (int i = 0; i < size; i++) {
-            s.append(list[i]).append(", ");
+            if (s.length() > 0) s.append(", ");
+            s.append(list[i]);
         }
         return "размер: " + size + ", значения: " + s;
     }
@@ -109,29 +136,24 @@ public class MyArrayList<T> implements List<T> {
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
+
+            private int index;
+
             @Override
             public boolean hasNext() {
-                return index < list.length;
+                return index < size;
             }
 
             @Override
-            public Object next() {
-                if (index < size) {
-                    return list[index++];
-                }
-                return -1;
+            public T next() {
+                return list[index++];
             }
 
             @Override
             public void remove() {
-                if ((index >= 0) && (index < size)) {
-                    Object[] temp = new Object[size - 1];
-                    System.arraycopy(list, 0, temp, 0, index);
-                    System.arraycopy(list, index + 1, temp, index, size - index - 1);
-                    list = temp;
-                    size--;
-                }
+                MyArrayList.this.remove(index);
             }
         };
     }
 }
+

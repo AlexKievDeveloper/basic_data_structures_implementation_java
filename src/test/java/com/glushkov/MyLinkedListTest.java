@@ -1,94 +1,161 @@
 package com.glushkov;
 
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Iterator;
 
 import static org.junit.Assert.*;
 
-public class MyLinkedListTest {
+public class MyLinkedListTest<T> {
     private MyLinkedList<Integer> list = new MyLinkedList<>();
+
+    private List<String> listWithZeroElements;
+    private List<String> listWithFiveElements;
+    private List<String> listWithTenElements;
+
+    @Before
+    public void before() {
+        listWithZeroElements = new MyLinkedList<>();
+
+        listWithFiveElements = new MyLinkedList<>();
+        char c = 'A';
+        for (int i = 0; i < 5; i++) {
+            String value = String.valueOf(c);
+            listWithFiveElements.add(value);
+            c++;
+        }
+
+        listWithTenElements = new MyLinkedList<>();
+        c = 'A';
+        for (int i = 0; i < 10; i++) {
+            String value = String.valueOf(c);
+            listWithTenElements.add(value);
+            c++;
+        }
+    }
 
     @Test
     public void add() {
-
-        assertEquals(list.size(), 0);
+        //prepare
         for (int i = 0; i < 12; i++) {
             list.add(i);
             assertEquals(list.size(), i + 1);
         }
-
-        for (int i = 0; i < 12; i++) {
-            assertEquals(list.get(i), i);
-        }
+        Integer expected = 10;
+        //when
+        Integer actual = list.get(10);
+        //then
+        assertEquals(expected, actual);
     }
 
     @Test
     public void addValue() {
-        assertEquals(list.size(), 0);
-
+        //prepare
         for (int i = 0; i < 10; i++) {
             list.add(10);
         }
-
-        assertEquals(list.size(), 10);
-
-        for (int i = 0; i < 10; i++) {
-            list.addValue(20, i);
-            assertEquals(list.size(), i + 11);
-        }
+        int expected = 10;
+        int actual = list.size();
+        assertEquals(expected, actual);
 
         for (int i = 0; i < 10; i++) {
-            assertEquals(list.get(i), 20);
+            list.add(20, i);
         }
-
-        for (int i = 10; i < 20; i++) {
-            assertEquals(list.get(i), 10);
-        }
+        expected = 20;
+        actual = list.get(0);
+        assertEquals(expected, actual);
     }
+
 
     @Test
     public void remove() {
+        Object removed = listWithFiveElements.remove(1);
+        assertEquals(4, listWithFiveElements.size());
+        assertEquals("B", removed);
+        assertEquals("A", listWithFiveElements.get(0));
+        assertEquals("C", listWithFiveElements.get(1));
+        assertEquals("D", listWithFiveElements.get(2));
+        assertEquals("E", listWithFiveElements.get(3));
 
+        //prepare
         for (int i = 0; i < 10; i++) {
             list.add(i);
         }
         assertEquals(list.size(), 10);
-        assertEquals(list.get(4), 4);
-        list.remove(4);
-        assertEquals(list.size(), 9);
-        assertEquals(list.get(4), 5);
+
+        int actual = list.get(4);
+        assertEquals(4, actual);
+        int expected = 4;
+        //when
+        actual = list.remove(4);
+        //then
+        assertEquals(expected, actual);
+        actual = list.get(4);
+        assertEquals(5, actual);
+        assertEquals(9, list.size());
     }
 
-    @Test
+    @Test(expected = IndexOutOfBoundsException.class)
     public void get() {
+        char c = 'A';
+        for (int i = 0; i < 5; i++) {
+            String value = String.valueOf(c);
+            assertEquals(value, listWithFiveElements.get(i));
+            c++;
+        }
 
+        //prepare
         for (int i = 0; i < 10; i++) {
             list.add(i);
-            assertEquals(list.get(i), i);
+            int actual = list.get(i);
+            assertEquals(i, actual);
         }
-        assertEquals(list.get(-100), -1);
-        assertEquals(list.get(100), -1);
+        Integer expected = 100;
+        //when
+        Integer actual = list.get(100);
+        //then
+        assertEquals(expected, actual);
     }
 
     @Test
     public void set() {
+        char c = 'F';
+        for (int i = 0; i < 5; i++) {
+            String value = String.valueOf(c);
+            listWithFiveElements.set(value, i);
+            assertEquals(value, listWithFiveElements.get(i));
+            c++;
+        }
 
         for (int i = 0; i < 100; i++) {
             list.add(i);
-            assertEquals(list.get(i), i);
+            int actual = list.get(i);
+            assertEquals(i, actual);
         }
         list.set(400, 0);
-        assertEquals(list.get(0), 400);
+        int actual = list.get(0);
+        assertEquals(400, actual);
         list.set(500, 5);
-        assertEquals(list.get(5), 500);
+        actual = list.get(5);
+        assertEquals(500, actual);
         list.set(600, 99);
-        assertEquals(list.get(99), 600);
+        actual = list.get(99);
+        assertEquals(600, actual);
     }
 
     @Test
     public void clear() {
+        assertEquals(5, listWithFiveElements.size());
+        listWithFiveElements.clear();
+        assertEquals(0, listWithFiveElements.size());
+        assertTrue(list.isEmpty());
+
+
         for (int i = 0; i < 10; i++) {
             list.add(i);
-            assertEquals(list.get(i), i);
+            int actual = list.get(i);
+            assertEquals(i, actual);
         }
         list.clear();
         assertTrue(list.isEmpty());
@@ -97,15 +164,21 @@ public class MyLinkedListTest {
 
     @Test
     public void contains() {
+        assertTrue(listWithFiveElements.contains("E"));
+        assertFalse(listWithFiveElements.contains("F"));
+
         for (int i = 0; i < 10; i++) {
             list.add(i);
         }
         assertFalse(list.contains(10));
-        assertTrue(list.contains(9));
     }
+
 
     @Test
     public void indexOf() {
+        assertEquals(0, listWithFiveElements.indexOf("A"));
+        assertEquals(4, listWithFiveElements.indexOf("E"));
+
         for (int i = 0; i < 10; i++) {
             list.add(i);
             assertEquals(list.indexOf(i), i);
@@ -114,23 +187,33 @@ public class MyLinkedListTest {
 
     @Test
     public void lastIndexOf() {
-        for (int i = 0; i < 10; i++) {
-            list.add(i);
-            assertEquals(list.lastIndexOf(i), i);
-        }
-    }
+        listWithTenElements.set("F", 8);
+        assertEquals(8, listWithTenElements.lastIndexOf("F"));
 
+        for (int i = 0; i < 3; i++) {
+            list.add(i);
+        }
+        assertEquals(list.lastIndexOf(2), 2);
+    }
 
     @Test
     public void size() {
-        for (int i = 0; i < 100; i++) {
+        assertEquals(0, listWithZeroElements.size());
+        assertEquals(5, listWithFiveElements.size());
+        assertEquals(10, listWithTenElements.size());
+
+        for (int i = 0; i < 3; i++) {
             list.add(i);
         }
-        assertEquals(list.size(), 100);
+        assertEquals(list.size(), 3);
     }
 
     @Test
     public void isEmpty() {
+        assertTrue(listWithZeroElements.isEmpty());
+        assertFalse(listWithFiveElements.isEmpty());
+        assertFalse(listWithTenElements.isEmpty());
+
         assertTrue(list.isEmpty());
         for (int i = 0; i < 10; i++) {
             list.add(i);
@@ -143,23 +226,22 @@ public class MyLinkedListTest {
         for (int i = 0; i < 3; i++) {
             list.add(i);
         }
-        assertEquals(list.toString(), "размер: 3, значения: 0, 1, 2, ");
+        assertEquals(list.toString(), "размер: 3, значения: 0, 1, 2");
     }
+
 
     @Test
     public void testIterator() {
-        Iterable.Iterator<Integer> testIterator = list.iterator();
         for (int i = 0; i < 10; i++) {
             list.add(i);
         }
-
-        testIterator.remove();
-
-        int j = 1;
+        Iterator<Integer> testIterator = list.iterator();
+        int expected = 0;
         while (testIterator.hasNext()) {
-            assertEquals(testIterator.next(), j);
-            if (j < list.size()) {
-                j++;
+            int actual = testIterator.next();
+            assertEquals(expected, actual);
+            if (expected < list.size()) {
+                expected++;
             }
         }
     }
