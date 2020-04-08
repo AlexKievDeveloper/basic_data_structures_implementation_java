@@ -9,6 +9,8 @@
         <module name="basic_data_structures_implementation_java" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="13" />
+    <bytecodeTargetLevel target="13">
+      <module name="basic_data_structures_implementation_java" target="8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
