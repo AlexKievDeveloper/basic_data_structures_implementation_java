@@ -1,5 +1,7 @@
-package com.glushkov;
+package com.glushkov.list;
 
+import com.glushkov.list.List;
+import com.glushkov.list.MyArrayList;
 import org.junit.Before;
 import org.junit.Test;
 

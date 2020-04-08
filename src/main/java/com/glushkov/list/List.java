@@ -1,4 +1,4 @@
-package com.glushkov;
+package com.glushkov.list;
 
 public interface List<T> extends Iterable<T> {
 
