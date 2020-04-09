@@ -80,6 +80,12 @@ public class HashMap<K, V> implements Map<K, V> {
 
     @Override
     public V putIfAbsent(K key, V value) {
+        if (size == 0) {
+            for (int i = 0; i < INITIAL_CAPACITY; i++) {
+                buckets[i] = new ArrayList<>();
+            }
+        }
+
         V oldValue = null;
         int index = key.hashCode() % buckets.length;
         for (Entry<K, V> entry : buckets[index]) {
