@@ -1,15 +1,15 @@
 package com.glushkov.map;
 
+import com.glushkov.list.List;
+import com.glushkov.list.MyArrayList;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 
-import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
 public class HashMapTest {
-    Map<Integer, String> map = new HashMap<>();
+    HashMap<Integer, String> map = new HashMap<>();
 
     @Before
     public void setUp() {
@@ -63,6 +63,66 @@ public class HashMapTest {
         assertNull(map.putIfAbsent(21, "Hello"));
         assertEquals("Hello", map.get(21));
         assertEquals(21, map.size());
+    }
+
+    @Test
+    public void putAll() {
+        Map<Integer, String> testMap = new HashMap<>();
+        testMap.put(100, "Alex");
+        testMap.put(200, "Max");
+        map.putAll(testMap);
+
+        String expected = "Max";
+        String actual = map.get(200);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void keys() {
+        List<Integer> testList = new MyArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            testList.add(i);
+        }
+
+        assertEquals(testList.size(), map.size());
+
+        for (int i = 0; i < testList.size(); i++) {
+            Integer expected = testList.get(i);
+            Integer actual = map.keys().get(i);
+            assertEquals(expected, actual);
+        }
+    }
+
+    @Test
+    public void values() {
+        List<String> testList = new MyArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            testList.add("Test = " + i);
+        }
+
+        assertEquals(testList.size(), map.size());
+
+        for (int i = 0; i < testList.size(); i++) {
+            String expected = testList.get(i);
+            String actual = map.values().get(i);
+            assertEquals(expected, actual);
+        }
+    }
+
+    @Test
+    public void increaseNumberOfBuckets() {
+        Integer expected = 40;
+        Integer actual = map.getBucketLength();
+        assertEquals(expected, actual);
+
+        for (int i = 20; i < 31; i++) {
+            map.put(i, "Test = " + i);
+        }
+
+        Integer expectedAfterIncrease = 80;
+        Integer actualAfterIncrease = map.getBucketLength();
+        assertEquals(expectedAfterIncrease, actualAfterIncrease);
     }
 
     @Test
