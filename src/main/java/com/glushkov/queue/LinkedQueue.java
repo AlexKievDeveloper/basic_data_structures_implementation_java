@@ -1,5 +1,7 @@
 package com.glushkov.queue;
 
+import com.glushkov.list.MyLinkedList;
+
 import java.util.Iterator;
 
 public class LinkedQueue<T> implements Deque<T> {
@@ -7,10 +9,9 @@ public class LinkedQueue<T> implements Deque<T> {
 
     Node head;
 
-    public static class NoSuchElementException extends Exception{
-        public NoSuchElementException(String textMessage){
+    public static class NoSuchElementException extends Exception {
+        public NoSuchElementException(String textMessage) {
             super(textMessage);
-            //System.out.println(textMessage);
         }
     }
 
@@ -35,12 +36,11 @@ public class LinkedQueue<T> implements Deque<T> {
     @Override
     public void addLast(T value) {
         Node newNode = new Node(value);
-        if (head == null){
+        if (head == null) {
             head = newNode;
-        }
-        else {
+        } else {
             Node current = head;
-            while (current.next != null){
+            while (current.next != null) {
                 current = current.next;
             }
             current.next = newNode;
@@ -56,7 +56,7 @@ public class LinkedQueue<T> implements Deque<T> {
     @Override
     public T getLast() {
         Node newNode = head;
-        while (newNode.next != null){
+        while (newNode.next != null) {
             newNode = newNode.next;
         }
         return newNode.value;
@@ -74,13 +74,12 @@ public class LinkedQueue<T> implements Deque<T> {
 
     @Override
     public T pop() throws NoSuchElementException {
-        if (head != null){
+        if (head != null) {
             Node newNode = head;
             head = head.next;
             size--;
             return newNode.value;
-        }
-        else throw new NoSuchElementException("There is no elements in the queue");
+        } else throw new NoSuchElementException("There is no elements in the queue");
     }
 
     @Override
@@ -96,7 +95,7 @@ public class LinkedQueue<T> implements Deque<T> {
 
     @Override
     public T peekFirst() {
-        if (head != null){
+        if (head != null) {
             return head.value;
         }
         return null;
@@ -116,54 +115,50 @@ public class LinkedQueue<T> implements Deque<T> {
 
     @Override
     public T pollFirst() {
-        if (head != null){
+        if (head != null) {
             Node newNode = head;
             head = head.next;
             size--;
             return newNode.value;
-        }
-        else return null;
+        } else return null;
     }
 
     @Override
     public T pollLast() {
         if (head != null) {
             Node newNode = head;
-            for (int i = 0; i < size-2; i++) {
+            for (int i = 0; i < size - 2; i++) {
                 newNode = newNode.next;
             }
             Node LastNode = newNode.next;
             newNode.next = null;
             size--;
             return LastNode.value;
-        }
-        else return null;
+        } else return null;
     }
 
     @Override
     public T removeLast() throws NoSuchElementException {
         if (head != null) {
             Node newNode = head;
-            for (int i = 0; i < size-2; i++) {
+            for (int i = 0; i < size - 2; i++) {
                 newNode = newNode.next;
             }
             Node LastNode = newNode.next;
             newNode.next = null;
             size--;
             return LastNode.value;
-        }
-        else throw new NoSuchElementException("There are no elements in the queue");
+        } else throw new NoSuchElementException("There are no elements in the queue");
     }
 
     @Override
     public T removeFirst() throws NoSuchElementException {
-        if (head != null){
+        if (head != null) {
             Node newNode = head;
             head = head.next;
             size--;
             return newNode.value;
-        }
-        else throw new NoSuchElementException("There is no elements in the queue");
+        } else throw new NoSuchElementException("There is no elements in the queue");
     }
 
     @Override
@@ -179,12 +174,11 @@ public class LinkedQueue<T> implements Deque<T> {
     @Override
     public boolean add(T value) {
         Node newNode = new Node(value);
-        if (head == null){
+        if (head == null) {
             head = newNode;
-        }
-        else {
+        } else {
             Node current = head;
-            while (current.next != null){
+            while (current.next != null) {
                 current = current.next;
             }
             current.next = newNode;
@@ -197,12 +191,11 @@ public class LinkedQueue<T> implements Deque<T> {
     @Override
     public boolean offer(T value) {
         Node newNode = new Node(value);
-        if (head == null){
+        if (head == null) {
             head = newNode;
-        }
-        else {
+        } else {
             Node current = head;
-            while (current.next != null){
+            while (current.next != null) {
                 current = current.next;
             }
             current.next = newNode;
@@ -213,18 +206,17 @@ public class LinkedQueue<T> implements Deque<T> {
 
     @Override
     public T remove() throws NoSuchElementException {
-        if (head != null){
+        if (head != null) {
             Node newNode = head;
             head = head.next;
             size--;
             return newNode.value;
-        }
-        else throw new NoSuchElementException("There is no elements in the queue");
+        } else throw new NoSuchElementException("There is no elements in the queue");
     }
 
     @Override
     public T poll() {
-        if (head != null){
+        if (head != null) {
             Node newNode = head;
             head = head.next;
             size--;
@@ -237,8 +229,7 @@ public class LinkedQueue<T> implements Deque<T> {
     public T element() throws NoSuchElementException {
         if (head != null) {
             return head.value;
-        }
-        else throw new NoSuchElementException("There is no elements in the queue");
+        } else throw new NoSuchElementException("There is no elements in the queue");
     }
 
     @Override
@@ -249,10 +240,10 @@ public class LinkedQueue<T> implements Deque<T> {
         return null;
     }
 
-    public void printAllQueue(){
+    public void printAllQueue() {
         Node current = head;
         System.out.println(current.value);
-        while (current.next != null){
+        while (current.next != null) {
             current = current.next;
             System.out.println(current.value);
         }
@@ -261,10 +252,34 @@ public class LinkedQueue<T> implements Deque<T> {
     }
 
     @Override
-    public Iterator iterator() {
-        return null;
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            Node current = head;
+
+            @Override
+            public boolean hasNext() {
+                return current != null;
+            }
+
+            @Override
+            public T next() {
+                T value = current.value;
+                current = current.next;
+                return value;
+            }
+
+            @Override
+            public void remove() {
+                if (head != null) {
+                    Node newNode = head;
+                    head = head.next;
+                    size--;
+                }
+            }
+        };
     }
 }
+
 
 /*
     Е element() - возвращает элемент из головы очереди. Элемент нe удаляется. Если очередь пуста, инициируется исключение NoSuchElementException.
