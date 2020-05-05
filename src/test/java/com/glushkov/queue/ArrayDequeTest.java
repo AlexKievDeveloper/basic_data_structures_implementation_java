@@ -14,10 +14,10 @@ public class ArrayDequeTest extends ArrayDeque {
 
     @Before
     public void setUp() {
-        deque.add("Four");
-        deque.add("Three");
-        deque.add("Two");
-        deque.add("One");
+        deque.addFirst("Four");
+        deque.addFirst("Three");
+        deque.addFirst("Two");
+        deque.addFirst("One");
     }
 
     @Test
@@ -31,7 +31,7 @@ public class ArrayDequeTest extends ArrayDeque {
     @Test
     public void testAddLast() throws LinkedQueue.NoSuchElementException {
         String expected = "Last";
-        deque.addFirst("Last");
+        deque.addLast("Last");
         String actual = deque.getLast();
         assertEquals(expected, actual);
     }
@@ -169,9 +169,9 @@ public class ArrayDequeTest extends ArrayDeque {
 
     @Test
     public void testAdd() throws LinkedQueue.NoSuchElementException {
-        String expected = "First";
-        deque.add("First");
-        String actual = deque.getFirst();
+        String expected = "Last";
+        deque.add("Last");
+        String actual = deque.getLast();
         assertEquals(expected, actual);
     }
 

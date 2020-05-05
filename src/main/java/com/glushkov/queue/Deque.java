@@ -15,6 +15,6 @@ public interface Deque<T> extends Queue<T> {
     T pollLast();// - возвращает элемент, находящийся в хвосте двунаправленной очереди, одновременно удаляя его из очереди. Возвращает null, если очередь пуста.
     T removeLast() throws LinkedQueue.NoSuchElementException;// - возвращает элемент, находящийся в конце двунаправленной очереди, удаляя его в процессе. Возбуждает исключение NoSuchElementException, если очередь пуста.
     T removeFirst() throws LinkedQueue.NoSuchElementException;// - возвращает элемент, находящийся в голове двунаправленной очереди, одновременно удаляя его из очереди. Возбуждает исключение NoSuchElementException, если очередь пуста.
-    boolean removeLastOccurrence(Object obj);// - удаляет последнее вхождение obj из двунаправленной очереди. Возвращает true в случае успеха и false если очередь не содержала obj.
-    boolean removeFirstOccurrence(Object obj);// - удаляет первое вхождение obj из двунаправленной очереди. Возвращает true в случае успеха и false, если очередь не содержала obj.
+    boolean removeLastOccurrence(T obj) throws LinkedQueue.NoSuchElementException;// - удаляет последнее вхождение obj из двунаправленной очереди. Возвращает true в случае успеха и false если очередь не содержала obj.
+    boolean removeFirstOccurrence(T obj) throws LinkedQueue.NoSuchElementException;// - удаляет первое вхождение obj из двунаправленной очереди. Возвращает true в случае успеха и false, если очередь не содержала obj.
 }

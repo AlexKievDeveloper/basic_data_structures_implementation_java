@@ -234,10 +234,12 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public boolean add(T e) {
         if (size < array.length){
-            if (size != 0) {
-                System.arraycopy(array, 0, array, 1, size);
+            if (size == 0){
+                array[0] = e;
             }
-            array[0] = e;
+            else {
+                array[size] = e;
+            }
             size++;
             return true;
         }

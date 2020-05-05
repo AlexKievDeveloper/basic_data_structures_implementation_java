@@ -1,16 +1,24 @@
 package com.glushkov;
 
-import com.glushkov.queue.ArrayDeque;
 import com.glushkov.queue.LinkedQueue;
-import com.glushkov.queue.Queue;
-import org.w3c.dom.ls.LSOutput;
-
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 public class Test {
     public static void main(String[] args) throws LinkedQueue.NoSuchElementException {
+
+    }
+}
+
+/*        LinkedQueue<String> queue = new LinkedQueue<>();
+        queue.addFirst("Four");
+        queue.addFirst("Three");
+        queue.addFirst("Two");
+        queue.addFirst("One");
+
+        queue.removeLastOccurrence("Four");
+        queue.printAllQueue();*/
+
+
+/*
         ArrayDeque<String> queue = new ArrayDeque<>();
         queue.offer("Serg");
         queue.offer("Eugene");
@@ -67,29 +75,7 @@ public class Test {
         queue.printAll();
         queue.remove();
         queue.printAll();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*/
 
 
 
@@ -155,5 +141,3 @@ public class Test {
         System.out.println(queue.remove());
         System.out.println();
         queue.printAllQueue();*/
-    }
-}

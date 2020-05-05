@@ -5,6 +5,10 @@ import com.glushkov.list.MyLinkedList;
 import java.util.Iterator;
 
 public class LinkedQueue<T> implements Deque<T> {
+    public int getSize() {
+        return size;
+    }
+
     int size;
 
     Node head;
@@ -64,12 +68,28 @@ public class LinkedQueue<T> implements Deque<T> {
 
     @Override
     public boolean offerFirst(T value) {
-        return false;
+        Node newHead = new Node(value);
+        Node temp = head;
+        head = newHead;
+        newHead.next = temp;
+        size++;
+        return true;
     }
 
     @Override
     public boolean offerLast(T value) {
-        return false;
+        Node newNode = new Node(value);
+        if (head == null) {
+            head = newNode;
+        } else {
+            Node current = head;
+            while (current.next != null) {
+                current = current.next;
+            }
+            current.next = newNode;
+        }
+        size++;
+        return true;
     }
 
     @Override
@@ -162,12 +182,45 @@ public class LinkedQueue<T> implements Deque<T> {
     }
 
     @Override
-    public boolean removeLastOccurrence(Object value) {
+    public boolean removeLastOccurrence(T value) throws NoSuchElementException {
+        /*Node newNode = new Node(value);
+        if (head != null){
+            Node temp = head;
+            for (int i = 0; i < size-1; i++) {
+                temp = temp.next;
+            }
+                for (int i = 0; i < size-1; i++) {
+                    if (temp.next.value.equals(newNode.value)) {
+                        temp.next = temp.next.next;
+                        size--;
+                        return true;
+                    }
+                    temp = temp.next;
+                }
+        }*/
         return false;
     }
 
     @Override
-    public boolean removeFirstOccurrence(Object value) {
+    public boolean removeFirstOccurrence(T value) throws NoSuchElementException {
+        Node newNode = new Node(value);
+        if (head != null){
+            Node temp = head;
+            if (temp.value.equals(newNode.value)){
+                this.remove();
+                return true;
+            }
+            else {
+                for (int i = 0; i < size-1; i++) {
+                    if (temp.next.value.equals(newNode.value)) {
+                        temp.next = temp.next.next;
+                        size--;
+                        return true;
+                    }
+                    temp = temp.next;
+                }
+            }
+        }
         return false;
     }
 
